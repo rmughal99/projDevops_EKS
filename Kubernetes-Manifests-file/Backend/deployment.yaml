@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   name: api
-  namespace: devops
+  namespace: workshop
   labels: 
     role: api
     env: demo
 spec: 
-  replicas: 2
+  replicas: 1
   strategy: 
     type: RollingUpdate
     rollingUpdate:
@@ -21,11 +21,9 @@ spec:
       labels:
         role: api
     spec:
-      imagePullSecrets:
-      - name: ecr-registry-secret
       containers:
       - name: api
-        image: 481665117634.dkr.ecr.eu-north-1.amazonaws.com/projdevops-backend:latest
+        image: public.ecr.aws/s5q9s5p7/todo-backend:latest
         imagePullPolicy: Always
         env:
           - name: MONGO_CONN_STR
@@ -41,17 +39,17 @@ spec:
                 name: mongo-sec
                 key: password
         ports:
-        - containerPort: 3500
+        - containerPort: 8080
         livenessProbe: 
           httpGet:
             path: /ok
-            port: 3500
+            port: 8080
           initialDelaySeconds: 2
           periodSeconds: 5
         readinessProbe:
           httpGet:
             path: /ok
-            port: 3500
+            port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
